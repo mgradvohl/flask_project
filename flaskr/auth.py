@@ -22,10 +22,10 @@ def register():
         elif not password:
             error = 'Password is required.'
         elif db.execute(
-            'SELECT id FORM user WHERE username = ?', (username,)
+            'SELECT id FROM user WHERE username = ?', (username,)
         ).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
-        
+
         if error is None:
             db.execute(
                 'INSERT INTO user (username, password) VALUES (?, ?)',
@@ -51,7 +51,7 @@ def login():
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password']. password):
+        elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
 
         if error is None:
@@ -83,8 +83,8 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth/login'))
-        
+            return redirect(url_for('auth.login'))
+
         return view(**kwargs)
-        
+
     return wrapped_view
