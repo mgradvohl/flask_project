@@ -25,27 +25,27 @@ def create():
         title = request.form['title']
         body = request.form['body']
         error = None
-    
-    if not title:
-        error = 'Title is required.'
-    
-    if error is not None:
-        flash(error)
-    else:
-        db = get_db()
-        db.execute(
-            'INSERT INTO post (title, body, author_id)'
-            ' VALUES (?, ?, ?)'
-            (title, body, g.user['id'])
-        )
-        db.commit()
-        return redirect(url_for('blog.index'))
-    
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                'INSERT INTO post (title, body, author_id)'
+                ' VALUES (?, ?, ?)',
+                (title, body, g.user['id'])
+            )
+            db.commit()
+            return redirect(url_for('blog.index'))
+
     return render_template('blog/create.html')
 
 def get_post(id, check_author=True):
     post = get_db().execute(
-        'SELECT p.id, title, doby, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = ?',
         (id,)
@@ -86,7 +86,7 @@ def update(id):
     
     return render_template('blog/update.html', post=post)
 
-@db.route('<int:id>/delete', methods=('POST',))
+@bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
     get_post(id)
