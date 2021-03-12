@@ -1,5 +1,5 @@
 import pytest
-from flaskr import g, session
+from flask import g, session
 from flaskr.db import get_db
 
 def test_register(client, app):
